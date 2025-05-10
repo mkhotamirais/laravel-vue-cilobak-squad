@@ -56,3 +56,20 @@ a {
 .badge {
     @apply first-letter:uppercase text-xs font-semibold text-white mr-1 bg-primary hover:bg-primary-dark transition-all rounded-full px-2 py-1;
 }
+
+.dark {
+    --vs-controls-color: var(--color-primary);
+    --vs-border-color: #aaaaaa;
+
+    --vs-dropdown-bg: var(--color-dark-2);
+    --vs-dropdown-color: var(--color-primary);
+    --vs-dropdown-option-color: var(--color-primary);
+
+    --vs-selected-bg: var(--color-dark-2);
+    --vs-selected-color: #eeeeee;
+
+    --vs-search-input-color: #eeeeee;
+
+    --vs-dropdown-option--active-bg: var(--color-primary);
+    --vs-dropdown-option--active-color: #eeeeee;
+}

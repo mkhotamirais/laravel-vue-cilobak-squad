@@ -1,27 +1,21 @@
 <script setup>
-import SessMsg from "@/Components/SessMsg.vue";
 import PaginationInput from "@/Components/PaginationInput.vue";
+import CardSchedule from "@/Components/CardSchedule.vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { computed } from "vue";
-import { formatTanggal } from "@/functions";
 
 const props = defineProps({
   schedules: Object,
   msg: String,
   searchTerm: String,
   institusiTerm: String,
-  pesertaTerm: String,
+  userTerm: String,
+  userid: String,
 });
 
 const params = route().params;
 const page = usePage();
 const user = computed(() => page.props.auth.user);
-
-const deleteSchedule = (id) => {
-  if (confirm("Yakin ingin hapus?")) {
-    router.delete(route("jadwal.destroy", id));
-  }
-};
 
 const formSearch = { search: props.searchTerm };
 const formInstitusi = { institusi: props.institusiTerm };
@@ -30,7 +24,7 @@ const search = () => {
   router.get(route("home"), {
     search: formSearch.search || null,
     institusi: props.institusiTerm || null,
-    peserta: props.pesertaTerm || null,
+    userid: props.userid || null,
   });
 };
 
@@ -38,28 +32,29 @@ const selectInstitusi = () => {
   router.get(route("home"), {
     institusi: formInstitusi.institusi,
     search: props.searchTerm || null,
-    peserta: props.pesertaTerm || null,
+    userid: props.userid || null,
   });
 };
 
-const chooseInstitusi = (e) => {
-  router.get(route("home"), {
-    institusi: e,
-    search: props.searchTerm || null,
-    peserta: props.pesertaTerm || null,
-  });
-};
-
-const choosePeserta = (e) => {
-  router.get(route("home"), {
-    peserta: e,
-    institusi: props.institusiTerm || null,
-    search: props.searchTerm || null,
-  });
+const deleteSchedule = (id) => {
+  if (confirm("Yakin ingin hapus?")) {
+    router.delete(route("jadwal.destroy", id), {
+      preserveScroll: true,
+    });
+  }
 };
 </script>
 
 <template>
+  <!-- header -->
+  <div class="container mt-4">
+    <div v-if="user && user.role === 'admin'">
+      <Link :href="route('jadwal.create')" class="btn w-fit mb-2">
+        Create Schedule
+      </Link>
+      <!-- <SessMsg :msg="msg" /> -->
+    </div>
+  </div>
   <section class="">
     <div class="sticky top-16 bg-light dark:bg-dark py-4">
       <div
@@ -93,7 +88,7 @@ const choosePeserta = (e) => {
             <i class="fa-solid fa-magnifying-glass text-primary"></i>
           </button>
         </form>
-        <div v-if="searchTerm || institusiTerm || pesertaTerm">
+        <div v-if="searchTerm || institusiTerm || userTerm">
           <button
             @click="
               router.get(route('home'), { ...params, search: null, page: null })
@@ -122,80 +117,50 @@ const choosePeserta = (e) => {
             @click="
               router.get(route('home'), {
                 ...params,
-                peserta: null,
+                userid: null,
                 page: null,
               })
             "
             class="badge"
-            v-if="pesertaTerm"
+            v-if="userTerm"
           >
-            {{ pesertaTerm }}
+            {{ userTerm }}
             <i class="fa-solid fa-times ml-1"></i>
           </button>
         </div>
       </div>
     </div>
-    <div class="container">
-      <div v-if="user">
-        <Link :href="route('jadwal.create')" class="btn w-fit mb-2">
-          Create Schedule
-        </Link>
-        <SessMsg :msg="msg" />
-      </div>
 
-      <!-- Schedules -->
+    <!-- Schedules -->
+    <div class="container">
       <div v-if="schedules.data.length">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div
-            v-for="(s, i) in schedules.data"
-            :key="i"
-            class="bg-white dark:bg-dark-2 shadow-sm rounded-md p-4 space-y-2"
-          >
-            <p>
-              <i class="fa-solid fa-book text-primary mr-2"></i>
-              {{ s.mata_pelajaran }}
-            </p>
-            <button
-              @click="chooseInstitusi(s.institusi)"
-              class="uppercase font-semibold !text-primary hover:underline"
+          <template v-for="(s, i) in schedules.data" :key="i">
+            <CardSchedule
+              :s="s"
+              :userid="userid"
+              :searchTerm="searchTerm"
+              :institusiTerm="institusiTerm"
             >
-              <i class="fa-solid fa-university text-primary mr-2"></i>
-              {{ s.institusi.replace("_", " ") }}
-            </button>
-            <p>
-              <i class="fa-solid fa-calendar-days text-primary mr-2"></i>
-              {{ formatTanggal(s.tanggal) }}
-            </p>
-            <p class="">
-              <i class="fa-solid fa-book-open text-primary mr-1"></i>
-              {{ s.materi_diskusi }}
-            </p>
-            <div v-if="s.peserta" class="">
-              <i class="fa-solid fa-users text-primary mr-2"></i>
-              <button
-                v-for="(p, j) in s.peserta.split(',')"
-                :key="j"
-                class="badge my-1"
-                @click="choosePeserta(p)"
+              <div
+                v-if="user && user.role === 'admin'"
+                class="flex gap-4 items-center"
               >
-                {{ p }}
-              </button>
-            </div>
-            <div v-if="user" class="flex gap-4 items-center">
-              <Link
-                :href="route('jadwal.edit', s.id)"
-                class="text-green-500 hover:underline"
-              >
-                Edit
-              </Link>
-              <button
-                @click="deleteSchedule(s.id)"
-                class="text-red-500 hover:underline"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+                <Link
+                  :href="route('jadwal.edit', s.id)"
+                  class="text-green-500 hover:underline"
+                >
+                  Edit
+                </Link>
+                <button
+                  @click="deleteSchedule(s.id)"
+                  class="text-red-500 hover:underline"
+                >
+                  Delete
+                </button>
+              </div>
+            </CardSchedule>
+          </template>
         </div>
         <div class="flex justify-center mt-4">
           <PaginationInput :paginator="schedules" />

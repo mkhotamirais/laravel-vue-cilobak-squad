@@ -24,3 +24,10 @@ export function formatTanggal(tanggalString) {
 
     return `${hari} ${bulan} ${tahun} - ${jam}:${menit}`;
 }
+
+export const institusi = [
+    { value: "ptiq_h", label: "PTIQ H" },
+    { value: "pku_b", label: "PKU B" },
+    { value: "pku_p", label: "PKU P" },
+    { value: "ptiq_g", label: "PTIQ G" },
+];

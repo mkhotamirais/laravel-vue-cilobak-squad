@@ -9,7 +9,7 @@ defineProps({
 </script>
 
 <template>
-  <div>
+  <div class="mb-3">
     <label
       :for="label"
       class="block text-sm font-medium text-slate-700 dark:text-slate-300"

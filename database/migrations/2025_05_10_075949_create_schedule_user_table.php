@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('schedule_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('creator_id')->constrained('users')->cascadeOnDelete();
-            $table->string('mata_pelajaran');
-            $table->enum('institusi', ['ptiq_h', 'pku_b', 'pku_p', 'ptiq_g']);
-            $table->string('tanggal')->unique();
-            $table->text('materi_diskusi');
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('schedule_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('schedule_user');
     }
 };

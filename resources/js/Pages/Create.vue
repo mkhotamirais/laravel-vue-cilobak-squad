@@ -2,11 +2,15 @@
 import { useForm } from "@inertiajs/vue3";
 import Input from "@/Components/Input.vue";
 import TextArea from "@/Components/TextArea.vue";
+import { institusi } from "../functions";
+
+const props = defineProps({ users: Object });
 
 const form = useForm({
   mata_pelajaran: null,
   tanggal: null,
-  peserta: null,
+  institusi: null,
+  users: [],
   materi_diskusi: null,
 });
 
@@ -51,14 +55,40 @@ const submit = () => {
             v-model="form.tanggal"
             :error="form.errors.tanggal"
           />
-          <Input
-            label="Peserta (pisahkan dengan koma)"
-            icon="users"
-            placeholder="ahmad, abdul, siti"
-            id="peserta"
-            v-model="form.peserta"
-            :error="form.errors.peserta"
-          />
+
+          <div class="mb-4">
+            <v-select
+              id="institusi"
+              :options="institusi"
+              :reduce="(institusi) => institusi.value"
+              v-model="form.institusi"
+              placeholder="Pilih institusi"
+            >
+              <template #header>
+                <div style="opacity: 0.8">Institusi</div>
+              </template>
+            </v-select>
+            <p v-if="form.errors.institusi" class="!text-danger">
+              <small>{{ form.errors.institusi }}</small>
+            </p>
+          </div>
+          <div class="mb-4">
+            <v-select
+              id="users"
+              :options="users"
+              :reduce="(user) => user.value"
+              v-model="form.users"
+              multiple
+              placeholder="Pilih peserta"
+            >
+              <template #header>
+                <div style="opacity: 0.8">Peserta</div>
+              </template>
+            </v-select>
+            <p v-if="form.errors.users" class="!text-danger">
+              <small>{{ form.errors.users }}</small>
+            </p>
+          </div>
 
           <div class="flex items-center gap-2 mt-4">
             <button type="submit" class="btn w-fit" :disabled="form.processing">

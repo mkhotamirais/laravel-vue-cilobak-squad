@@ -3,68 +3,91 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        $schedules = Schedule::filter(request(['search', 'institusi', 'peserta']))
+        $schedules = Schedule::with('users:id,name')
+            ->filter(request(['search', 'institusi', 'userid']))
             ->orderBy('tanggal', 'asc')
-            ->paginate(4)
+            ->paginate(8)
             ->withQueryString();
         $msg = session('msg');
         $searchTerm = $request->search;
         $institusiTerm = $request->institusi;
-        $pesertaTerm = $request->peserta;
+        $userTerm = User::find($request->userid)->name ?? null;
+        $userid = $request->userid;
 
-        return inertia('Home', compact('schedules', 'msg', 'searchTerm', 'institusiTerm', 'pesertaTerm'));
+        return inertia('Home', compact('schedules', 'msg', 'searchTerm', 'institusiTerm', 'userTerm', 'userid'));
     }
 
     public function create()
     {
-        return inertia('Create');
+        $users = User::orderBy('name')->get(['id', 'name'])
+            ->map(function ($user) {
+                return ['label' => $user->name, 'value' => $user->id];
+            });
+
+        return inertia('Create', compact('users'));
     }
 
     public function store(Request $request)
     {
         $fields = $request->validate([
             'mata_pelajaran' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'peserta' => 'required|string|max:255',
+            'institusi' => 'required',
+            'users' => 'required|array', // users tidak wajib
+            // 'tanggal' => 'required|date|after:now',
+            'tanggal' => 'required|date|unique:schedules,tanggal',
             'materi_diskusi' => 'required|string|max:255',
         ]);
 
-        $fields['peserta'] = implode(',', array_unique(array_filter(array_map('trim', explode(',', $request->peserta)))));
+        $schedule = $request->user()->schedulescreator()->create($fields);
 
-        $request->user()->schedules()->create($fields);
+        $schedule->users()->sync($fields['users'] ?? []);
 
         return redirect()->route('home')->with('msg', 'Jadwal berhasil ditambahkan.');
     }
 
     public function edit(Schedule $schedule)
     {
-        return inertia('Edit', compact('schedule'));
+        $schedule->load('users:id,name');
+        $schedule->tanggal = Carbon::parse($schedule->tanggal)->format('Y-m-d\TH:i');
+        $users = User::orderBy('name')->get(['id', 'name'])
+            ->map(function ($user) {
+                return ['label' => $user->name, 'value' => $user->id];
+            });
+
+        return inertia('Edit', compact('schedule', 'users'));
     }
 
     public function update(Request $request, Schedule $schedule)
     {
         $fields = $request->validate([
             'mata_pelajaran' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'peserta' => 'required|string|max:255',
+            'institusi' => 'required',
+            'users' => 'required|array', // users tidak wajib
+            'tanggal' => 'required|date|unique:schedules,tanggal,' . $schedule->id,
             'materi_diskusi' => 'required|string|max:255',
         ]);
 
-        $fields['peserta'] = implode(',', array_unique(array_filter(array_map('trim', explode(',', $request->peserta)))));
-
+        // $schedule->updateAndShiftSchedules($fields);
         $schedule->update($fields);
+
+        $schedule->users()->sync($fields['users'] ?? []);
+
 
         return redirect()->route('home')->with('msg', 'Jadwal berhasil diperbarui.');
     }
 
     public function destroy(Schedule $schedule)
     {
+        // $schedule->destroyAndShiftSchedules();
+        $schedule->users()->detach();
         $schedule->delete();
         return redirect()->route('home')->with('msg', 'Jadwal berhasil dihapus.');
     }

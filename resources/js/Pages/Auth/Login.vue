@@ -52,9 +52,9 @@ const submit = () => {
             <CheckBox name="remember" v-model="form.remember">
               Remember me
             </CheckBox>
-            <!-- <Link :href="route('password.request')" class="link"
+            <Link :href="route('password.request')" class="link"
               >Forgot your password?</Link
-            > -->
+            >
           </div>
 
           <button type="submit" :disabled="form.processing" class="btn">

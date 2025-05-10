@@ -2,13 +2,19 @@
 import { useForm } from "@inertiajs/vue3";
 import Input from "@/Components/Input.vue";
 import TextArea from "@/Components/TextArea.vue";
+import { institusi } from "../functions";
 
-const props = defineProps({ schedule: Object });
+const props = defineProps({ schedule: Object, users: Object });
+console.log(props.schedule);
 
 const form = useForm({
   mata_pelajaran: props.schedule.mata_pelajaran || null,
+  // tanggal: props.schedule.tanggal
+  //   ? new Date(props.schedule.tanggal).toISOString().slice(0, 16)
+  //   : null,
   tanggal: props.schedule.tanggal || null,
-  peserta: props.schedule.peserta || null,
+  institusi: props.schedule.institusi || null,
+  users: props.schedule.users ? props.schedule.users.map((u) => u.id) : [],
   materi_diskusi: props.schedule.materi_diskusi || null,
   _method: "PATCH",
 });
@@ -48,14 +54,39 @@ const form = useForm({
             v-model="form.tanggal"
             :error="form.errors.tanggal"
           />
-          <Input
-            label="Peserta (pisahkan dengan koma)"
-            icon="users"
-            placeholder="ahmad, abdul, siti"
-            id="peserta"
-            v-model="form.peserta"
-            :error="form.errors.peserta"
-          />
+          <div class="mb-4">
+            <v-select
+              id="institusi"
+              :options="institusi"
+              :reduce="(institusi) => institusi.value"
+              v-model="form.institusi"
+              placeholder="Pilih institusi"
+            >
+              <template #header>
+                <div style="opacity: 0.8">Institusi</div>
+              </template>
+            </v-select>
+            <p v-if="form.errors.institusi" class="!text-danger">
+              <small>{{ form.errors.institusi }}</small>
+            </p>
+          </div>
+          <div class="mb-4">
+            <v-select
+              id="users"
+              :options="users"
+              :reduce="(user) => user.value"
+              v-model="form.users"
+              multiple
+              placeholder="Pilih peserta"
+            >
+              <template #header>
+                <div style="opacity: 0.8">Peserta</div>
+              </template>
+            </v-select>
+            <p v-if="form.errors.users" class="!text-danger">
+              <small>{{ form.errors.users }}</small>
+            </p>
+          </div>
 
           <div class="flex items-center gap-2 mt-4">
             <button type="submit" class="btn w-fit" :disabled="form.processing">
