@@ -17,7 +17,7 @@ class ScheduleSeeder extends Seeder
             'creator_id' => 1,
             'mata_pelajaran' => 'Matematika',
             'institusi' => 'ptiq_h',
-            'tanggal' => '2025-05-08',
+            'tanggal' => '2025-05-22',
             'materi_diskusi' => 'Pembahasan Soal Ujian panjang',
         ]);
         $schedule1->users()->attach([1, 2, 3]);
@@ -26,7 +26,7 @@ class ScheduleSeeder extends Seeder
             'creator_id' => 2,
             'mata_pelajaran' => 'Bahasa Indonesia',
             'institusi' => 'pku_b',
-            'tanggal' => '2025-05-09',
+            'tanggal' => '2025-05-29',
             'materi_diskusi' => 'Pembahasan Soal Ujian dua',
         ]);
         $schedule2->users()->attach([1, 2, 3, 4]);
@@ -35,7 +35,7 @@ class ScheduleSeeder extends Seeder
             'creator_id' => 1,
             'mata_pelajaran' => 'Bahasa Inggris',
             'institusi' => 'pku_p',
-            'tanggal' => '2025-05-10',
+            'tanggal' => '2025-06-05',
             'materi_diskusi' => 'Pembahasan Soal Ujian tiga',
         ]);
         $schedule3->users()->attach([2, 3, 4, 5]);
@@ -44,7 +44,7 @@ class ScheduleSeeder extends Seeder
             'creator_id' => 1,
             'mata_pelajaran' => 'Bahasa Inggris',
             'institusi' => 'ptiq_h',
-            'tanggal' => '2025-05-11',
+            'tanggal' => '2025-06-12',
             'materi_diskusi' => 'Pembahasan Soal Ujian empat',
         ]);
         $schedule4->users()->attach([3, 4, 5]);

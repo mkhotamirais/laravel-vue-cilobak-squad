@@ -75,11 +75,28 @@ class ScheduleController extends Controller
             'materi_diskusi' => 'required|string|max:255',
         ]);
 
-        // $schedule->updateAndShiftSchedules($fields);
-        $schedule->update($fields);
+        $oldDate = Carbon::parse($schedule->tanggal);
+        $newDate = Carbon::parse($fields['tanggal']);
 
+        $schedule->update($fields);
         $schedule->users()->sync($fields['users'] ?? []);
 
+        if (!$oldDate->equalTo($newDate)) {
+            // Ambil semua jadwal yang ID-nya lebih besar dari jadwal yang baru diubah
+            $nextSchedules = Schedule::where('id', '>', $schedule->id)
+                ->orderBy('id')
+                ->get();
+
+            $nextDate = $newDate->copy()->addDays(7); // Jadwal berikutnya dimulai 7 hari dari tanggal baru
+
+            foreach ($nextSchedules as $nextSchedule) {
+                $nextSchedule->update([
+                    'tanggal' => $nextDate->format('Y-m-d'),
+                ]);
+
+                $nextDate->addDays(7); // setiap jadwal +7 hari
+            }
+        }
 
         return redirect()->route('home')->with('msg', 'Jadwal berhasil diperbarui.');
     }

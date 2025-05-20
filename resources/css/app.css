@@ -34,7 +34,7 @@ a {
 }
 
 .h1 {
-    @apply capitalize text-4xl font-bold;
+    @apply capitalize text-3xl md:text-4xl font-bold;
 }
 
 .h2 {
@@ -51,6 +51,14 @@ a {
 
 .btn {
     @apply px-6 py-2 text-sm font-semibold block text-center rounded-lg bg-primary hover:bg-primary-dark transition-all text-white disabled:bg-slate-400 disabled:cursor-wait;
+}
+
+.btn-icon {
+    @apply p-2.5 flex items-center justify-center rounded-full hover:bg-primary/20 dark:hover:bg-black/90 transition-all text-primary leading-none size-10;
+}
+
+.btn-nav {
+    @apply py-3 px-4 rounded-lg block w-full text-left text-sm leading-none bg-primary/10 hover:bg-primary/20;
 }
 
 .badge {

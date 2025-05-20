@@ -17,13 +17,13 @@ const openSearch = ref(false);
       <div class="container flex items-center gap-4 justify-between">
         <Logo />
 
-        <nav class="flex items-center">
+        <nav class="flex items-center gap-1">
           <!-- nav user -->
           <NavUser :user="user" />
 
           <!-- theme -->
           <div>
-            <button @click="switchTheme" class="py-2 px-3">
+            <button @click="switchTheme" class="btn-icon">
               <i class="fa-solid fa-circle-half-stroke"></i>
             </button>
           </div>

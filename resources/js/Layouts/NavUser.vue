@@ -10,7 +10,7 @@ const openNavUser = ref(false);
 
 <template>
   <div v-if="user" class="relative">
-    <button @click="openNavUser = !openNavUser" class="py-2 px-3">
+    <button @click="openNavUser = !openNavUser" class="btn-icon">
       <i class="fa-solid fa-user"></i>
     </button>
     <div
@@ -25,30 +25,45 @@ const openNavUser = ref(false);
       >
         <div class="p-3">
           <div class="flex items-center justify-between">
-            <div>Halo {{ user.name }}</div>
+            <p class="font-semibold">Halo {{ user.name }}</p>
             <button
               @click="openNavUser = false"
               type="button"
-              title="close"
-              class="border px-3 py-2"
+              aria-label="close nav user"
+              class="btn-icon"
             >
+              <!-- <i class="fa-solid fa-user"></i> -->
               <i class="fa-solid fa-times"></i>
             </button>
           </div>
-          <Link
-            @click="openNavUser = false"
-            :href="route('logout')"
-            method="post"
-            as="button"
-            class="p-2 bg-primary text-white rounded-lg mt-2 text-sm hover:underline"
-            >Logout</Link
-          >
+          <nav class="space-y-1 mt-2">
+            <Link
+              @click="openNavUser = false"
+              :href="route('user.schedule')"
+              class="btn-nav"
+              >Jawal Saya</Link
+            >
+            <Link
+              @click="openNavUser = false"
+              :href="route('home')"
+              class="btn-nav"
+              >Jawal Semua</Link
+            >
+            <Link
+              @click="openNavUser = false"
+              :href="route('logout')"
+              method="post"
+              as="button"
+              class="btn-nav !text-danger"
+              >Logout</Link
+            >
+          </nav>
         </div>
       </div>
     </div>
   </div>
-  <div v-else class="flex gap-4">
-    <Link href="/login">Login</Link>
-    <Link href="/register">Register</Link>
+  <div v-else class="flex items-center gap-4">
+    <Link href="/login" class="link">Login</Link>
+    <Link href="/register" class="btn !px-4">Register</Link>
   </div>
 </template>

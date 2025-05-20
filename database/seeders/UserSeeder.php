@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => null,
-            'role' => 'admin'
+            'role' => 'user'
         ]);
 
         $siti = User::create([
@@ -41,6 +41,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => null,
+            'role' => 'user'
         ]);
 
         $ayu = User::create([
@@ -50,6 +51,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => null,
+            'role' => 'user'
         ]);
 
         $intan = User::create([
@@ -59,6 +61,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => null,
+            'role' => 'user'
         ]);
     }
 }
